@@ -1,21 +1,14 @@
-# extension-keyboard-shortcuts — Keyboard Shortcut Manager
+# extension-keyboard-shortcuts
 
-[![npm](https://img.shields.io/npm/v/extension-keyboard-shortcuts.svg)](https://www.npmjs.com/package/extension-keyboard-shortcuts)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
-[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-green.svg)]()
+A keyboard shortcut manager for Chrome extensions. Register shortcuts, detect conflicts, and display a hint overlay for users. Built for Manifest V3.
 
-> **Built by [Zovo](https://zovo.one)** — shortcuts across 18+ Chrome extensions
-
-**Register keyboard combos, conflict detection, and shortcut hint overlay** for Chrome extensions. Zero runtime dependencies.
-
-## 📦 Install
+## INSTALL
 
 ```bash
 npm install extension-keyboard-shortcuts
 ```
 
-## 🚀 Quick Start
+## QUICK START
 
 ```typescript
 import { KeyboardShortcuts } from 'extension-keyboard-shortcuts';
@@ -36,88 +29,83 @@ keys.register('ctrl+/', () => {
 keys.start();
 ```
 
-## ✨ Features
+## API REFERENCE
 
-### Shortcut Registration
+### Methods
+
+**register(combo, handler, description)**
+
+Register a keyboard shortcut. The combo string uses + to separate modifiers and key.
 
 ```typescript
-// Simple shortcuts
-keys.register('ctrl+s', save);
-keys.register('alt+f', openFile);
-
-// With modifiers
-keys.register('ctrl+shift+p', openCommandPalette);
-keys.register('meta+option+space', triggerAction);
-
-// Prevent default
-keys.register('ctrl+w', closeTab, { preventDefault: true });
+keys.register('ctrl+s', () => save(), 'Save document');
+keys.register('ctrl+shift+p', () => openPalette(), 'Command palette');
 ```
 
-### Conflict Detection
+**unregister(combo)**
+
+Remove a registered shortcut.
 
 ```typescript
-// Check for conflicts before registering
-const conflict = keys.checkConflict('ctrl+s');
-if (conflict) {
-    console.log('Conflict with:', conflict);
-}
-
-// Get all conflicts
-const allConflicts = keys.getConflicts();
+keys.unregister('ctrl+s');
 ```
 
-### Shortcut Hints
+**start()**
+
+Begin listening for keyboard events. Returns this for chaining.
 
 ```typescript
-// Show overlay with all shortcuts
-keys.showHints(); // Press Ctrl+/ to toggle
-
-// Customize hint style
-keys.setHintOptions({
-    position: 'bottom-right',
-    theme: 'dark',
-    opacity: 0.9
-});
+keys.start();
 ```
 
-### User Customization
+**stop()**
+
+Stop listening for keyboard events. Returns this for chaining.
 
 ```typescript
-// Let users rebind shortcuts
-keys.enableRebinding();
-
-// Get current bindings
-const bindings = keys.getBindings();
-
-// Save custom bindings
-await keys.saveBindings();
+keys.stop();
 ```
 
-## API Reference
+**list()**
 
-### `KeyboardShortcuts`
-
-| Method | Description |
-|--------|-------------|
-| `register(combo, handler, description)` | Register shortcut |
-| `unregister(combo)` | Remove shortcut |
-| `start()` | Start listening |
-| `stop()` | Stop listening |
-| `showHints()` | Show hint overlay |
-| `hideHints()` | Hide hint overlay |
-| `checkConflict(combo)` | Check for conflicts |
-| `getBindings()` | Get all bindings |
-
-### Options
+Return all registered shortcuts as an array of objects containing combo and description.
 
 ```typescript
-interface ShortcutOptions {
-    description?: string;
-    preventDefault?: boolean;
-    enabled?: boolean;
+const shortcuts = keys.list();
+// [{ combo: 'ctrl+shift+s', description: 'Save work' }, ...]
+```
+
+**hasConflict(combo)**
+
+Check if a shortcut combo is already registered.
+
+```typescript
+if (keys.hasConflict('ctrl+s')) {
+    console.log('Shortcut already in use');
 }
 ```
 
-## 📄 License
+**showHints()**
 
-MIT — [Zovo](https://zovo.one)
+Display an overlay showing all registered shortcuts. The overlay is a modal that users can dismiss by clicking outside. Returns the overlay DOM element.
+
+```typescript
+keys.showHints();
+```
+
+### Combo Format
+
+Use lowercase letters and + separators. Modifier keys: ctrl, shift, alt, meta.
+
+```typescript
+'ctrl+c'      // Copy
+'ctrl+shift+v' // Paste without formatting
+'alt+f'       // Open file
+'meta+k'      // Command+K on Mac
+```
+
+## ABOUT
+
+Maintained by theluckystrike. Built for Chrome extension developers who need a simple, zero-dependency solution for managing keyboard shortcuts in their extensions.
+
+For issues and contributions, please refer to the CONTRIBUTING guide.
